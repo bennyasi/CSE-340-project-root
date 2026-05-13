@@ -4,7 +4,7 @@ import path from 'path';
 
 // --- 1. Configuration & Constants ---
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || "production";
-const PORT = process.env.PORT || 3000; 
+const PORT = process.env.PORT || 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,6 +42,13 @@ app.get('/organizations', (req, res) => {
 // Projects Route
 app.get('/projects', (req, res) => {
     res.render('projects', { title: 'Projects' });
+});
+
+// Categories Route
+app.get('/categories', (req, res) => {
+    res.render('categories', {
+        title: 'Service Project Categories'
+    });
 });
 
 /**
