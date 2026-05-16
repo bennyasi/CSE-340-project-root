@@ -1,26 +1,25 @@
-<%- include('partials/header', { title: title }) %>
+<%- include('partials/header') %>
 
 <main>
     <h1><%= title %></h1>
-
     <p>Here are a few of our partner organizations:</p>
-
+    
     <ul>
-        <li>
-            <img src="/images/brightfuture-logo.png" alt="Brightfuture Builders Logo">
-            <strong>Brightfuture Builders</strong>
-        </li>
-
-        <li>
-            <img src="/images/greenharvest-logo.png" alt="Greenharvest Growers Logo">
-            <strong>Greenharvest Growers</strong>
-        </li>
-
-        <li>
-            <img src="/images/unityserve-logo.png" alt="UnityServe Volunteers Logo">
-            <strong>UnityServe Volunteers</strong>
-        </li>
+        <% if (organizations && organizations.length > 0) { %>
+            <% organizations.forEach(org => { %>
+                <li>
+                    <!-- Fixed: Closed the img tag properly with > -->
+                    <img src="/images/<%= org.logo_filename %>" alt="<%= org.name %> Logo"> 
+                    
+                    <strong><%= org.name %></strong>: 
+                    <!-- Enhanced: Made the email a clickable link -->
+                    <a href="mailto:<%= org.contact_email %>"><%= org.contact_email %></a>
+                </li>
+            <% }) %>
+        <% } else { %>
+            <li>No organizations available at this time.</li>
+        <% } %>
     </ul>
 </main>
 
-<%- include('partials/footer') %>
+<%- include('partials/footer') %>s
