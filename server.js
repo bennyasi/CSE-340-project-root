@@ -3,10 +3,11 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import 'dotenv/config'; 
 
+
 import db, { testConnection } from './src/models/db.js';
 import { getAllOrganizations } from './src/models/organizations.js'; 
-import { getAllProjects } from './src/models/projects.js';       // New Import
-import { getAllCategories } from './src/models/categories.js';   // New Import
+import { getAllProjects } from './src/models/projects.js';
+import { getAllCategories } from './src/models/categories.js';
 
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || "development";
 const PORT = process.env.PORT || 3000;
