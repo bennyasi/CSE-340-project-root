@@ -1,12 +1,17 @@
 <%- include('partials/header') %>
 <main>
     <h1><%= title %></h1>
-    <!-- Put your page-specific content here -->
     <p>Here are a few of our partner organizations:</p>
-        <ul>
-            <% organizations.forEach(organization => { %>
-            <li><img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo"><strong><%= organization.name %></strong>: <%= organization.contact_email %></li>
-            <% }); %>
-        </ul>
+    <ul>
+        <% organizations.forEach(organization => { %>
+            <li>
+                <img 
+                  src="/images/<%= organization.logo_filename || 'default-logo.png' %>" 
+                  alt="<%= organization.name %> logo" 
+                  width="100">
+                <strong><%= organization.name %></strong>: <%= organization.contact_email %>
+            </li>
+        <% }); %>
+    </ul>
 </main>
 <%- include('partials/footer') %>
