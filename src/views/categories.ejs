@@ -1,14 +1,14 @@
-<%- include('partials/header', { title: title }) %>
-
+<%- include('partials/header') %>
 <main>
     <h1><%= title %></h1>
-
     <ul>
-        <li>Environmental</li>
-        <li>Educational</li>
-        <li>Community Service</li>
-        <li>Health and Wellness</li>
+        <% if (categories && categories.length > 0) { %>
+            <% categories.forEach(cat => { %>
+                <li><%= cat.name %></li>
+            <% }) %>
+        <% } else { %>
+            <li>No categories available at this time.</li>
+        <% } %>
     </ul>
 </main>
-
 <%- include('partials/footer') %>
