@@ -3,8 +3,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import 'dotenv/config'; 
 
-// Import the default (db) AND the named function (testConnection) exactly as defined by your instructor
-import db, { testConnection } from './src/models/db.js';
+import { testConnection } from './src/models/db.js';
 import { getAllOrganizations } from './src/models/organizations.js'; 
 import { getAllProjects } from './src/models/projects.js';
 import { getAllCategories } from './src/models/categories.js';
