@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import 'dotenv/config'; 
 
-// Import database functions
+// Import the default (db) AND the named function (testConnection) exactly as defined by your instructor
 import db, { testConnection } from './src/models/db.js';
 import { getAllOrganizations } from './src/models/organizations.js'; 
 import { getAllProjects } from './src/models/projects.js';
@@ -12,20 +12,15 @@ import { getAllCategories } from './src/models/categories.js';
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || "development";
 const PORT = process.env.PORT || 3000;
 
-// Setup __filename and __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Set view engine to EJS and views directory
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
-// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Middleware for parsing JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -33,16 +28,16 @@ app.use(express.urlencoded({ extended: true }));
  * --- Routes ---
  */
 
-// Home Route
 app.get('/', (req, res) => {
     res.render('home', { title: 'Home' });
 });
 
-// Organizations Route
+/**
+ * Organizations Route
+ */
 app.get('/organizations', async (req, res) => {
   try {
     const organizations = await getAllOrganizations();
-    console.log('Organizations retrieved:', organizations);
     const title = 'Our Partner Organizations';
 
     console.log("=========================================");
@@ -61,7 +56,9 @@ app.get('/organizations', async (req, res) => {
   }
 });
 
-// Projects Route
+/**
+ * Projects Route
+ */
 app.get('/projects', async (req, res) => {
   try {
     const projects = await getAllProjects();
@@ -70,7 +67,6 @@ app.get('/projects', async (req, res) => {
     console.log("=========================================");
     console.log("Route /projects accessed successfully.");
     console.log("Number of projects found:", projects ? projects.length : 0);
-    console.log("Database payload:", JSON.stringify(projects, null, 2));
     console.log("=========================================");
 
     res.render('projects', { title, projects });
@@ -84,7 +80,9 @@ app.get('/projects', async (req, res) => {
   }
 });
 
-// Categories Route
+/**
+ * Categories Route
+ */
 app.get('/categories', async (req, res) => {
   try {
     const categories = await getAllCategories();
@@ -93,7 +91,6 @@ app.get('/categories', async (req, res) => {
     console.log("=========================================");
     console.log("Route /categories accessed successfully.");
     console.log("Number of categories found:", categories ? categories.length : 0);
-    console.log("Database payload:", JSON.stringify(categories, null, 2));
     console.log("=========================================");
 
     res.render('categories', { title, categories });
@@ -114,7 +111,7 @@ app.listen(PORT, () => {
     console.log(`Server is running at http://127.0.0.1:${PORT}`);
     console.log(`Environment: ${NODE_ENV}`);
 
-    // Test database connection
+    // Invoking your instructor's testConnection function cleanly
     testConnection()
         .then(() => {
             console.log('Database connection successful');
