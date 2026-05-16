@@ -1,9 +1,14 @@
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import 'dotenv/config'; 
 
-// --- 1. Configuration & Constants ---
-const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || "production";
+import db, { testConnection } from './src/models/db.js';
+import { getAllOrganizations } from './src/models/organizations.js'; 
+import { getAllProjects } from './src/models/projects.js';       // New Import
+import { getAllCategories } from './src/models/categories.js';   // New Import
+
+const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || "development";
 const PORT = process.env.PORT || 3000;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -11,53 +16,111 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-/**
- * --- 2. Configure View Engine ---
- * This tells Express to use EJS and look inside src/views for templates
- */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
-/**
- * --- 3. Middleware ---
- * Serves files from the public folder (CSS, Images, JS)
- */
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 /**
- * --- 4. Routes ---
- * These use res.render to look for .ejs files in your src/views folder
+ * --- Routes ---
  */
 
-// Home Route
 app.get('/', (req, res) => {
     res.render('home', { title: 'Home' });
 });
 
-// Organizations Route
-app.get('/organizations', (req, res) => {
-    res.render('organizations', { title: 'Organizations' });
-});
+/**
+ * Organizations Route
+ */
+app.get('/organizations', async (req, res) => {
+  try {
+    const organizations = await getAllOrganizations();
+    console.log('organizations retrieved:', organizations); 
+    const title = 'Our Partner Organizations';
 
-// Projects Route
-app.get('/projects', (req, res) => {
-    res.render('projects', { title: 'Projects' });
-});
+    console.log("=========================================");
+    console.log("Route /organizations accessed successfully.");
+    console.log("Number of organizations found:", organizations ? organizations.length : 0);
+    console.log("=========================================");
 
-// Categories Route
-app.get('/categories', (req, res) => {
-    res.render('categories', {
-        title: 'Service Project Categories'
+    res.render('organizations', { title, organizations });
+  } catch (error) {
+    console.error('Organizations route error:', error.message);
+    res.render('organizations', {
+      title: 'Our Partner Organizations',
+      organizations: [],
+      errorMessage: 'Failed to load organizations. Please try again later.'
     });
+  }
 });
 
 /**
- * --- 5. Server Listener ---
+ * Projects Route
+ */
+app.get('/projects', async (req, res) => {
+  try {
+    const projects = await getAllProjects();
+    const title = 'Projects';
+
+    console.log("=========================================");
+    console.log("Route /projects accessed successfully.");
+    console.log("Number of projects found:", projects ? projects.length : 0);
+    console.log("Database payload:", JSON.stringify(projects, null, 2));
+    console.log("=========================================");
+
+    res.render('projects', { title, projects });
+  } catch (error) {
+    console.error('Projects route error:', error.message);
+    res.render('projects', {
+      title: 'Projects',
+      projects: [],
+      errorMessage: 'Failed to load projects. Please try again later.'
+    });
+  }
+});
+
+/**
+ * Categories Route
+ */
+app.get('/categories', async (req, res) => {
+  try {
+    const categories = await getAllCategories();
+    const title = 'Service Project Categories';
+
+    console.log("=========================================");
+    console.log("Route /categories accessed successfully.");
+    console.log("Number of categories found:", categories ? categories.length : 0);
+    console.log("Database payload:", JSON.stringify(categories, null, 2));
+    console.log("=========================================");
+
+    res.render('categories', { title, categories });
+  } catch (error) {
+    console.error('Categories route error:', error.message);
+    res.render('categories', {
+      title: 'Service Project Categories',
+      categories: [],
+      errorMessage: 'Failed to load categories. Please try again later.'
+    });
+  }
+});
+
+/**
+ * --- Server Listener ---
  */
 app.listen(PORT, () => {
-    console.log(`--------------------------------------------------`);
-    console.log(` Server is active!`);
-    console.log(` View it at: http://localhost:${PORT}`);
-    console.log(` Environment: ${NODE_ENV}`);
-    console.log(`--------------------------------------------------`);
+    console.log(`Server is running at http://127.0.0.1:${PORT}`);
+    console.log(`Environment: ${NODE_ENV}`);
+
+    testConnection()
+        .then(() => {
+            console.log('Database connection successful');
+        })
+        .catch((error) => {
+            console.log(
+                'Database connection failed (server still runs):',
+                error.message
+            );
+        });
 });
