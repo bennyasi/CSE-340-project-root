@@ -11,10 +11,13 @@ const pool = new Pool({
     rejectUnauthorized: false,
   },
 
-  // Stability improvements
+  // 🔥 Stability improvements
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
+
+  // 🚨 CRITICAL FIX for Render + ECONNREFUSED issues
+  family: 4,
 });
 
 /**
@@ -39,7 +42,6 @@ const query = async (text, params = [], retries = 2) => {
     return res;
 
   } catch (error) {
-    // 🔥 FULL ERROR OUTPUT (FIXED)
     console.error(
       'Database query error FULL:',
       JSON.stringify({
@@ -48,11 +50,11 @@ const query = async (text, params = [], retries = 2) => {
         code: error?.code,
         detail: error?.detail,
         hint: error?.hint,
-        stack: error?.stack
+        stack: error?.stack,
       }, null, 2)
     );
 
-    // Retry logic (Render instability fix)
+    // 🔁 Retry logic for Render instability
     if (retries > 0) {
       console.log(`Retrying query... attempts left: ${retries}`);
       return query(text, params, retries - 1);
