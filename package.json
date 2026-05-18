@@ -4,34 +4,27 @@
   "description": "CSE 340 Service Network Project",
   "type": "module",
   "main": "server.js",
-
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
-
   "dependencies": {
-    "dotenv": "^17.4.2",
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "pg": "^8.16.0"
   },
-
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.0"
   },
-
   "engines": {
     "node": "18.x"
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bennyasi/CSE-340-project-root.git"
   },
-
   "homepage": "https://github.com/bennyasi/CSE-340-project-root",
-
   "license": "ISC",
   "author": "Benedicta"
 }
