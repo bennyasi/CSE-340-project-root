@@ -1,58 +1,56 @@
 import { Pool } from 'pg';
 
 /**
- * Connection pool for PostgreSQL database.
- * 
- * Uses a connection string from environment variables for simplified setup.
- * The connection string format is:
- * postgresql://username:password@host:port/database
+ * PostgreSQL connection pool
+ * Uses DB_URL from .env
  */
-
-const isProduction = process.env.NODE_ENV === 'production';
 
 const pool = new Pool({
   connectionString: process.env.DB_URL,
-  ssl: isProduction ? { rejectUnauthorized: false } : false
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
-let db = null;
+/**
+ * Wrapper for queries (adds logging in dev mode)
+ */
+const query = async (text, params) => {
+  try {
+    const start = Date.now();
+    const res = await pool.query(text, params);
+    const duration = Date.now() - start;
 
-if (process.env.NODE_ENV === 'development' && process.env.ENABLE_SQL_LOGGING === 'true') {
-  db = {
-    async query(text, params) {
-      try {
-        const start = Date.now();
-        const res = await pool.query(text, params);
-        const duration = Date.now() - start;
-        console.log('Executed query:', {
-          text: text.replace(/\s+/g, ' ').trim(),
-          duration: `${duration}ms`,
-          rows: res.rowCount
-        });
-        return res;
-      } catch (error) {
-        console.error('Error in query:', {
-          text: text.replace(/\s+/g, ' ').trim(),
-          error: error.message
-        });
-        throw error;
-      }
-    },
-    async close() {
-      await pool.end();
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Executed query:', {
+        text: text.replace(/\s+/g, ' ').trim(),
+        duration: `${duration}ms`,
+        rows: res.rowCount,
+      });
     }
-  };
-} else {
-  db = pool;
-}
+
+    return res;
+  } catch (error) {
+    console.error('Database query error:', {
+      text: text.replace(/\s+/g, ' ').trim(),
+      error: error.message,
+    });
+    throw error;
+  }
+};
 
 /**
- * Tests the database connection by executing a simple query.
+ * Test database connection
  */
 const testConnection = async () => {
   try {
-    const result = await db.query('SELECT NOW() as current_time');
-    console.log('Database connection successful:', result.rows[0].current_time);
+    const result = await query('SELECT NOW() as current_time');
+
+    console.log(
+      'Database connection successful:',
+      result.rows[0].current_time
+    );
+
     return true;
   } catch (error) {
     console.error('Database connection failed:', error.message);
@@ -60,4 +58,9 @@ const testConnection = async () => {
   }
 };
 
-export { db as default, testConnection };
+export default {
+  query,
+  close: () => pool.end(),
+};
+
+export { testConnection };
