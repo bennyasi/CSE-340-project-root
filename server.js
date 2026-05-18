@@ -1,7 +1,9 @@
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import 'dotenv/config'; 
+import 'dotenv/config'; import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
+
 
 import { testConnection } from './src/models/db.js';
 import { getAllOrganizations } from './src/models/organizations.js'; 
