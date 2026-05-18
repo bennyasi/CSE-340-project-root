@@ -11,14 +11,14 @@ const pool = new Pool({
     rejectUnauthorized: false,
   },
 
-  // 🔥 Stability improvements
-  max: 10, // max connections
-  idleTimeoutMillis: 30000, // close idle connections after 30s
-  connectionTimeoutMillis: 10000, // fail if connection takes too long
+  // Stability improvements
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
 });
 
 /**
- * Query wrapper with retry + logging
+ * Query wrapper with retry + FULL error logging
  */
 const query = async (text, params = [], retries = 2) => {
   try {
@@ -39,14 +39,20 @@ const query = async (text, params = [], retries = 2) => {
     return res;
 
   } catch (error) {
-    console.error('Database query error FULL:', {
-      text,
-      message: error.message,
-      code: error.code,
-      detail: error.detail,
-    });
+    // 🔥 FULL ERROR OUTPUT (FIXED)
+    console.error(
+      'Database query error FULL:',
+      JSON.stringify({
+        text,
+        message: error?.message,
+        code: error?.code,
+        detail: error?.detail,
+        hint: error?.hint,
+        stack: error?.stack
+      }, null, 2)
+    );
 
-    // 🔁 Retry logic (important for Render DB instability)
+    // Retry logic (Render instability fix)
     if (retries > 0) {
       console.log(`Retrying query... attempts left: ${retries}`);
       return query(text, params, retries - 1);
