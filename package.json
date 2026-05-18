@@ -1,35 +1,37 @@
-{
+
   "name": "cse340-project-root",
   "version": "1.0.0",
-  "description": "",
-  "homepage": "https://github.com/bennyasi/CSE-340-project-root.git-course-repo#readme",
-  "bugs": {
-    "url": "https://github.com/bennyasi/CSE-340-project-root.git-course-repo/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bennyasi/CSE-340-project-root.git-course-repo.git"
-  },
-  "license": "ISC",
-  "author": "",
+  "description": "CSE 340 Service Network Project",
   "type": "module",
   "main": "server.js",
+
   "scripts": {
-    "dev": "nodemon",
+    "dev": "nodemon server.js",
     "start": "node server.js"
+  },
+
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "pg": "^8.16.0"
+  },
+
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   },
 
   "engines": {
     "node": "18.x"
   },
 
-  "dependencies": {
-    "dotenv": "^17.4.2",
-    "ejs": "^5.0.2",
-    "express": "^5.2.1",
-    "pg": "^8.20.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bennyasi/CSE-340-project-root.git"
   },
-  "devDependencies": {
-    "nodemon": "^3.1.14"
-  }
+
+  "homepage": "https://github.com/bennyasi/CSE-340-project-root",
+
+  "license": "ISC",
+  "author": "Benedicta"
 }
