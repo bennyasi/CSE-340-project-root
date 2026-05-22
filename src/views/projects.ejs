@@ -1,0 +1,59 @@
+<%- include('partials/header') %>
+
+<main>
+    <h1><%= title %></h1>
+
+    <ul class="organization-list">
+
+        <% if (projects && projects.length > 0) { %>
+
+            <% projects.forEach(project => { %>
+
+                <li class="org-item">
+
+                    <div class="org-info">
+
+                        <!-- CLICKABLE PROJECT TITLE -->
+                        <strong>
+                            <a href="/projects/<%= project.project_id %>">
+                                <%= project.title %>
+                            </a>
+                        </strong>
+
+                        <br>
+
+                        <span>
+                            <%= project.description %>
+                        </span>
+
+                        <br>
+
+                        <!-- CLICKABLE ORGANIZATION (BETTER THAN ID) -->
+                        <small>
+                            Organization:
+                            <a href="/organizations/<%= project.organization_id %>">
+                                View Organization
+                            </a>
+                            |
+                            Category:
+                            <a href="/categories/<%= project.category_id %>">
+                                View Category
+                            </a>
+                        </small>
+
+                    </div>
+
+                </li>
+
+            <% }) %>
+
+        <% } else { %>
+
+            <li>No projects available at this time.</li>
+
+        <% } %>
+
+    </ul>
+</main>
+
+<%- include('partials/footer') %>
