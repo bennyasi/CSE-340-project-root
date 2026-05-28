@@ -1,0 +1,86 @@
+<%- include('../partials/header') %>
+
+<main class="container form-container">
+    <header class="page-header">
+        <h1><%= title %></h1>
+    </header>
+
+    <%- include('../partials/messages') %>
+
+    <div class="form-card">
+        <form action="/projects/<%= project.project_id %>" method="POST" class="interactive-form">
+            
+            <div class="form-group">
+                <label for="title" class="form-label">Project Title <span class="required-star">*</span></label>
+                <input 
+                    type="text" 
+                    id="title" 
+                    name="title" 
+                    value="<%= project.title %>" 
+                    minlength="3"
+                    maxlength="150" 
+                    required 
+                    placeholder="Enter project name"
+                    class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">Project Description <span class="required-star">*</span></label>
+                <textarea 
+                    id="description" 
+                    name="description" 
+                    minlength="10"
+                    maxlength="500" 
+                    required 
+                    placeholder="Describe the service project purpose and scope..."
+                    class="form-control" 
+                    rows="5"><%= project.description %></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="startDate" class="form-label">Start Date <span class="required-star">*</span></label>
+                <input 
+                    type="date" 
+                    id="startDate" 
+                    name="startDate" 
+                    value="<%= project.start_date ? new Date(project.start_date).toISOString().split('T')[0] : '' %>" 
+                    required 
+                    class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="status" class="form-label">Project Status <span class="required-star">*</span></label>
+                <select id="status" name="status" required class="form-control select-control">
+                    <option value="Planned" <%= project.status === 'Planned' || project.status === 'Planning' ? 'selected' : '' %>>Planning</option>
+                    <option value="Active" <%= project.status === 'Active' || project.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                    <option value="Completed" <%= project.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                    <option value="Archived" <%= project.status === 'Archived' ? 'selected' : '' %>>Archived</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="organizationId" class="form-label">Sponsoring Organization <span class="required-star">*</span></label>
+                <select id="organizationId" name="organizationId" required class="form-control select-control">
+                    <option value="" disabled>-- Choose Partner Organization --</option>
+                    <% if (organizations && organizations.length > 0) { %>
+                        <% organizations.forEach(org => { %>
+                            <option 
+                                value="<%= org.organization_id %>" 
+                                <%= project.organization_id == org.organization_id ? 'selected' : '' %>>
+                                <%= org.name %>
+                            </option>
+                        <% }) %>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="/projects/<%= project.project_id %>" class="btn btn-secondary">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

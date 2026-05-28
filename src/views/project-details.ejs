@@ -1,0 +1,39 @@
+<%- include('partials/header') %>
+
+<main>
+
+    <h1><%= title %></h1>
+
+    <% if (project) { %>
+
+        <h2><%= project.title %></h2>
+
+        <p>
+            <%= project.description %>
+        </p>
+
+        <hr>
+
+        <p>
+            <strong>Category:</strong>
+            <a href="/categories/<%= project.category_id %>">
+                View Category
+            </a>
+        </p>
+
+        <p>
+            <strong>Organization:</strong>
+            <a href="/organizations/<%= project.organization_id %>">
+                View Organization
+            </a>
+        </p>
+
+    <% } else { %>
+
+        <p>Project not found.</p>
+
+    <% } %>
+
+</main>
+
+<%- include('partials/footer') %>
