@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= typeof title !== 'undefined' ? title : 'Project Management' %></title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/organizations">Organizations</a></li>
+            <li><a href="/projects">Projects</a></li>
+            <li><a href="/categories">Categories</a></li>
+            <li><a href="/new-organization">Add New Organization</a></li>
+            <li><a href="/new-project">Add New Project</a></li>
+            <li><a href="/new-category">Add New Category</a></li>
+        </ul>
+    </nav>
+    
+    <%# Flash Message Rendering %>
+    <% if (messages && Object.keys(messages).length > 0) { %>
+        <div class="flash-messages-container">
+            <% Object.keys(messages).forEach(type => { %>
+                <% if (Array.isArray(messages[type])) { %>
+                    <% messages[type].forEach(msg => { %>
+                        <div class="alert alert-<%= type %>">
+                            <%= msg %>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="alert alert-<%= type %>">
+                        <%= messages[type] %>
+                    </div>
+                <% } %>
+            <% }); %>
+        </div>
+    <% } %>

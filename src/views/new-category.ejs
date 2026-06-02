@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+
+<main class="container" style="max-width: 600px; margin: 40px auto; padding: 0 20px;">
+    <h1>Add New Category</h1>
+
+    <% if (locals.messages && messages.error) { %>
+        <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+            <%= messages.error %>
+        </div>
+    <% } %>
+
+    <form action="/new-category" method="POST" class="form-layout">
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="name">Category Name:</label>
+            <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                maxlength="100" 
+                required 
+                placeholder="e.g., Environment, Education"
+                style="width: 100%; padding: 8px;"
+            >
+        </div>
+        <button type="submit" class="btn btn-primary">Create Category</button>
+        <a href="/categories" class="btn btn-secondary">Cancel</a>
+    </form>
+</main>
+
+<%- include('partials/footer') %>
