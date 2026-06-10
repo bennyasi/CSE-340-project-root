@@ -1,84 +1,155 @@
-
 import express from 'express';
-import { fileURLToPath } from 'url';
 import path from 'path';
 import session from 'express-session';
-import { testConnection } from './src/models/db.js';
-import router from './src/routes/routes.js';
-import flash from './src/middleware/flash.js';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import router from './src/routes/routes.js';
+import { testConnection } from './src/models/db.js';
+import flashMiddleware from './src/middleware/flash.js';
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 
-const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'development';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret-key';
-const PORT = process.env.PORT || 3000;
-
-// 1. View Engine Setup
+/* =========================
+   VIEW ENGINE
+========================= */
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'src/views'));
+app.set('views', path.join(__dirname, 'src', 'views'));
 
-// 2. Core Middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+/* =========================
+   STATIC FILES
+========================= */
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 3. Session & Flash Middleware
-app.use(session({
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false, 
-    cookie: { maxAge: 60 * 60 * 1000 }
-}));
-app.use(flash); 
-
-// Global locals for EJS templates
+/* =========================
+   DEBUG: REQUEST (BEFORE BODY PARSING)
+========================= */
 app.use((req, res, next) => {
-    res.locals.NODE_ENV = NODE_ENV;
+    console.log("\n--- REQUEST RECEIVED ---");
+    console.log("URL:", req.url);
+    console.log("METHOD:", req.method);
+    console.log("BODY BEFORE PARSING:", req.body);
+    next();
+});
+
+/* =========================
+   BODY PARSING (CRITICAL - MUST BE BEFORE ROUTES)
+========================= */
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+/* =========================
+   DEBUG: REQUEST (AFTER BODY PARSING)
+========================= */
+app.use((req, res, next) => {
+    console.log("BODY AFTER PARSING:", req.body);
+    console.log("-------------------------\n");
+    next();
+});
+
+/* =========================
+   SESSION CONFIG
+========================= */
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'super-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 // 1 hour
+    }
+}));
+
+/* =========================
+   FLASH MESSAGES
+========================= */
+app.use(flashMiddleware);
+
+/* =========================
+   GLOBAL LOCALS
+========================= */
+app.use((req, res, next) => {
+    res.locals.user = req.session?.user || null;
+    res.locals.isLoggedIn = !!req.session?.user;
     res.locals.messages = req.flash ? req.flash() : {};
     next();
 });
 
-// 4. Debugging Middleware (Logs every request)
+/* =========================
+   REQUEST LOG (FINAL CLEAN LOG)
+========================= */
 app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} request to: ${req.url}`);
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
 });
 
-// 5. Routes (Mounting the router here)
-app.use(router);
+/* =========================
+   ROUTES
+========================= */
+app.use('/', router);
 
-// 6. Error Handling (404 and 500)
-app.use((req, res, next) => {
-    const err = new Error('Page Not Found');
-    err.status = 404;
-    next(err);
+/* =========================
+   ROUTE DEBUG LIST
+========================= */
+console.log('--- REGISTERED ROUTES ---');
+router.stack.forEach((r) => {
+    if (r.route && r.route.path) {
+        const methods = Object.keys(r.route.methods)
+            .join(',')
+            .toUpperCase();
+
+        console.log(`- ${methods} ${r.route.path}`);
+    }
 });
+console.log('-------------------------');
 
-app.use((err, req, res, next) => {
-    const status = err.status || 500;
-    res.status(status);
-    const template = (status === 404) ? 'errors/404' : 'errors/500';
-    res.render(template, {
-        title: status === 404 ? '404 - Not Found' : '500 - Server Error',
-        message: err.message,
-        stack: NODE_ENV === 'development' ? err.stack : null
+/* =========================
+   404 HANDLER
+========================= */
+app.use((req, res) => {
+    console.log(`[404] ${req.url}`);
+
+    res.status(404).render('errors/404', {
+        title: '404 Not Found'
     });
 });
 
-// 7. Start Server
-app.listen(PORT, async () => {
+/* =========================
+   ERROR HANDLER
+========================= */
+app.use((err, req, res, next) => {
+    console.error('[SERVER ERROR]:', err);
+
+    res.status(500).render('errors/500', {
+        title: 'Server Error',
+        message:
+            process.env.NODE_ENV === 'development'
+                ? err.message
+                : 'Something went wrong!',
+        stack:
+            process.env.NODE_ENV === 'development'
+                ? err.stack
+                : null
+    });
+});
+
+/* =========================
+   START SERVER
+========================= */
+app.listen(process.env.PORT || 3000, async () => {
     try {
         await testConnection();
-        console.log(`Server running at http://127.0.0.1:${PORT}`);
-    } catch (error) {
-        console.error('Database connection failed:', error.message);
+
+        console.log(
+            `Server running at http://localhost:${process.env.PORT || 3000}`
+        );
+    } catch (err) {
+        console.error('Database connection failed:', err.message);
     }
 });
-import fs from 'fs';
-const viewsPath = path.join(__dirname, 'src/views');
-try {
-    console.log("👉 Actual files inside src/views:", fs.readdirSync(viewsPath));
-} catch (err) {
-    console.log("👉 Error reading directory:", err.message);
-}
