@@ -1,0 +1,84 @@
+<%- include('partials/header') %>
+
+<main class="container">
+
+```
+<div class="page-header">
+    <h1>Categories</h1>
+
+    <% if (user && user.role_name === 'admin') { %>
+        <a href="/new-category" class="btn btn-primary">
+            + Add New Category
+        </a>
+    <% } %>
+</div>
+
+<% if (categories && categories.length > 0) { %>
+
+    <div class="category-grid">
+        <% categories.forEach(category => { %>
+
+            <div class="category-card">
+                <h2><%= category.name %></h2>
+
+                <p>
+                    <a href="/category/<%= category.category_id %>">
+                        View Details
+                    </a>
+                </p>
+
+                <% if (user && user.role_name === 'admin') { %>
+                    <p>
+                        <a href="/edit-category/<%= category.category_id %>">
+                            Edit Category
+                        </a>
+                    </p>
+                <% } %>
+            </div>
+
+        <% }) %>
+    </div>
+
+<% } else { %>
+
+    <p>No categories available.</p>
+
+<% } %>
+```
+<form action="/register" method="POST">
+
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+
+    <div class="form-group">
+        <label for="category">Category</label>
+
+        <select id="category" name="category" required>
+            <option value="">Select a Category</option>
+            <option value="Education">Education</option>
+            <option value="Environment">Environment</option>
+            <option value="Health">Health</option>
+            <option value="Community Development">Community Development</option>
+            <option value="Agriculture">Agriculture</option>
+            <option value="Technology">Technology</option>
+        </select>
+    </div>
+
+    <button type="submit">Register</button>
+
+</form>
+
+</main>
+

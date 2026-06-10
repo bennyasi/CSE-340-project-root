@@ -1,0 +1,39 @@
+<%- include('partials/header') %>
+
+<main>
+ <main class="container" style="max-width: 600px; margin: 40px auto; padding: 0 20px;">
+    <h1>Add New Category</h1>
+
+    <% if (locals.messages && messages.error) { %>
+        <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+            <%= messages.error %>
+        </div>
+    <% } %>
+  
+    <h1>Registered Users</h1>
+
+    <% if (!users || users.length === 0) { %>
+        <p>No users found.</p>
+    <% } else { %>
+        <table border="1" cellpadding="10">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(user => { %>
+                    <tr>
+                        <td><%= user.name %></td>
+                        <td><%= user.email %></td>
+                        <td><%= user.role_name %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+</main>
+
+<%- include('partials/footer') %>

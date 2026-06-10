@@ -1,0 +1,22 @@
+<%- include('partials/header') %>
+
+<% if (messages.error && messages.error.length) { %>
+    <div class="alert alert-danger"><%= messages.error %></div>
+<% } %>
+
+<main>
+    <h1><%= title %></h1>
+
+    <h2>Dashboard</h2>
+
+    <p>Name: <%= user.name %></p>
+    <p>Username: <%= user.email %></p>
+
+    <% if (user && user.role_name === 'admin') { %>
+        <div class="admin-actions">
+            <a href="/users" class="btn btn-primary">Manage Users</a>
+        </div>
+    <% } %>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,111 @@
+<%- include('partials/header') %>
+
+<main class="content">
+
+    <h1>Service Projects</h1>
+
+    <!-- =========================
+         ADD NEW PROJECT (ADMIN ONLY)
+    ========================== -->
+    <% if (locals.user && locals.user.role_name === 'admin') { %>
+
+    <section class="form-container">
+
+        <h2>Add New Project</h2>
+
+        <form action="/new-project" method="POST">
+
+            <label>Title</label>
+            <input type="text" name="title" required>
+
+            <label>Description</label>
+            <textarea name="description" required></textarea>
+
+            <label>Organization</label>
+            <select name="organizationId" required>
+                <option value="">Select Organization</option>
+
+                <% if (organizations) { %>
+                    <% organizations.forEach(org => { %>
+                        <option value="<%= org.organization_id %>">
+                            <%= org.name %>
+                        </option>
+                    <% }) %>
+                <% } %>
+            </select>
+
+            <label>Category</label>
+            <select name="categoryId" required>
+                <option value="">Select Category</option>
+
+                <% if (categories) { %>
+                    <% categories.forEach(cat => { %>
+                        <option value="<%= cat.category_id %>">
+                            <%= cat.name %>
+                        </option>
+                    <% }) %>
+                <% } %>
+            </select>
+
+            <button type="submit">Create Project</button>
+
+        </form>
+
+    </section>
+
+    <% } %>
+
+    <!-- =========================
+         PROJECT LIST
+    ========================== -->
+    <section>
+
+        <ul class="organization-list">
+
+            <% if (projects && projects.length > 0) { %>
+
+                <% projects.forEach(project => { %>
+
+                    <li class="org-item">
+
+                        <strong>
+                            <a href="/project/<%= project.project_id %>">
+                                <%= project.title %>
+                            </a>
+                        </strong>
+
+                        <p><%= project.description %></p>
+
+                        <small>
+                            Organization:
+                            <a href="/organization/<%= project.organization_id %>">
+                                View Organization
+                            </a>
+                            |
+                            Category:
+                            <% if (project.category_id) { %>
+                                <a href="/category/<%= project.category_id %>">
+                                    View Category
+                                </a>
+                            <% } else { %>
+                                No Category
+                            <% } %>
+                        </small>
+
+                    </li>
+
+                <% }) %>
+
+            <% } else { %>
+
+                <li>No projects found.</li>
+
+            <% } %>
+
+        </ul>
+
+    </section>
+
+</main>
+
+<%- include('partials/footer') %>
