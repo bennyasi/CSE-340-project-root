@@ -4,6 +4,9 @@ dotenv.config();
 import pg from 'pg';
 const { Pool } = pg;
 
+// Debugging: Log the current DB_URL value to Render logs
+console.log("Checking DB_URL:", process.env.DB_URL);
+
 /**
  * Render PostgreSQL connection (CLOUD ONLY)
  */
