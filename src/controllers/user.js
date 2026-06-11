@@ -29,7 +29,6 @@ export const processUserRegistrationForm = async (req, res, next) => {
 
         req.flash('success', 'Account created successfully');
         return res.redirect('/login');
-
     } catch (err) {
         console.error('REGISTER ERROR:', err);
         next(err);
@@ -62,8 +61,15 @@ export const processLoginForm = async (req, res, next) => {
             return res.redirect('/login');
         }
 
-        req.session.user = user;
+        // Map database columns to session object keys
+        req.session.user = {
+            id: user.user_id,
+            name: user.name,
+            email: user.email,
+            role_name: user.role_name
+        };
 
+        // Ensure session is saved before redirecting
         req.session.save((err) => {
             if (err) return next(err);
             req.flash('success', 'Login successful');
@@ -108,7 +114,6 @@ export const showUsersPage = async (req, res, next) => {
             user: req.session.user,
             messages: res.locals.messages || {}
         });
-
     } catch (err) {
         next(err);
     }
