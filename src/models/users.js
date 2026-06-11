@@ -1,5 +1,5 @@
 import db from './db.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs'; // ✅ FIX: use bcryptjs for stability
 
 // =========================
 // CREATE USER
@@ -72,14 +72,17 @@ const authenticateUser = async (email, password) => {
 
     if (!isMatch) return null;
 
-    // remove password before returning user
-    const { password_hash, ...safeUser } = user;
-
-    return safeUser;
+    // IMPORTANT: normalize shape for session
+    return {
+        id: user.user_id,
+        name: user.name,
+        email: user.email,
+        role_name: user.role_name
+    };
 };
 
 // =========================
-// GET ALL USERS (ADMIN PAGE)
+// GET ALL USERS
 // =========================
 const getAllUsers = async () => {
     const result = await db.query(`
